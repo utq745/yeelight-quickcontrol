@@ -1,8 +1,16 @@
 {
   "name": "yeelight-quickcontrol",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fast, lightweight macOS menu bar controller for Yeelight smart bulbs",
   "main": "server.js",
+  "homepage": "https://github.com/utq745/yeelight-quickcontrol#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/utq745/yeelight-quickcontrol.git"
+  },
+  "bugs": {
+    "url": "https://github.com/utq745/yeelight-quickcontrol/issues"
+  },
   "scripts": {
     "start": "node server.js",
     "build": "./build.sh",

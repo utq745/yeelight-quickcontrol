@@ -12,12 +12,28 @@
 <p align="center">Maintained by <strong>Utku Sakallıoğlu</strong></p>
 
 <p align="center">
+  <a href="https://github.com/utq745/yeelight-quickcontrol/releases/latest"><img src="https://img.shields.io/badge/Download-latest_release-2ea44f.svg" alt="Download latest release" /></a>
   <a href="LICENSE.md"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache 2.0" /></a>
   <img src="https://img.shields.io/badge/Platform-macOS_13.0+-black.svg" alt="Platform: macOS" />
   <img src="https://img.shields.io/badge/Swift-5.0+-orange.svg" alt="Swift: 5+" />
   <img src="https://img.shields.io/badge/Node.js-Zero_Dependencies-brightgreen.svg" alt="Zero NPM Dependencies" />
   <img src="https://img.shields.io/badge/Bundle_Size-~1.2_MB-purple.svg" alt="Bundle Size: ~1.2 MB" />
 </p>
+
+---
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td align="center"><strong>Light on</strong></td>
+    <td align="center"><strong>Light off</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/dashboard-light-on.png" width="320" alt="Yeelight QuickControl with the light switched on" /></td>
+    <td><img src="docs/images/dashboard-light-off.png" width="320" alt="Yeelight QuickControl with the light switched off" /></td>
+  </tr>
+</table>
 
 ---
 
@@ -74,7 +90,7 @@ To allow local network communication with your Yeelight bulb:
 After publishing the repository, clone your copy and run the build script:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/yeelight-quickcontrol.git
+git clone https://github.com/utq745/yeelight-quickcontrol.git
 cd yeelight-quickcontrol
 
 # Build Yeelight QuickControl.app
@@ -97,13 +113,17 @@ To create a release-ready macOS Disk Image (`.dmg`):
 
 ### Publishing a GitHub Release
 
+Downloadable app files belong under **GitHub Releases**, not GitHub Packages.
+GitHub Packages is intended for package registries such as npm and container
+images, while a Release can directly host the DMG and ZIP files users download.
+
 The release workflow builds an ad-hoc-signed DMG and ZIP archive and publishes
 their SHA-256 checksums whenever a version tag is pushed. The tag must match the
 version in `package.json`:
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.0.1
+git push origin v1.0.1
 ```
 
 You can also run the Release workflow manually from GitHub Actions to download
