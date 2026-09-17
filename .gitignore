@@ -1,50 +1,31 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# Operating System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+Thumbs.db
 
-# compiled output
+# App Builds & Distribution
+*.app
+*.dmg
+*.zip
+/build
 /dist
-/tmp
-/out-tsc
-/app-builds
-/release
-main.js
-src/**/*.js
-!src/karma.conf.js
-*.js.map
 
-# dependencies
-/node_modules
+# Local Configuration & Data
+.smart-lights.json
+.yeelight-quickcontrol.json
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+# Node & Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# IDE - VSCode
+# IDEs and Editors
+.idea/
 .vscode/*
 !.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-testem.log
-/typings
-package-lock.json
-
-# e2e
-/e2e/*.js
-!/e2e/protractor.conf.js
-/e2e/*.map
-
-# System Files
-.DS_Store
-Thumbs.db
+*.swp
+*.swo

@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate Sources
+        run: |
+          node --check server.js
+          awk '/<script>/{f=1;next}/<\/script>/{f=0}f' dashboard.html | node --check -
+          bash -n build.sh
+
+      - name: Build Application
+        run: ./build.sh
+
+      - name: Verify Bundle
+        run: |
+          test -x "Yeelight QuickControl.app/Contents/MacOS/YeelightQuickControl"
+          plutil -lint "Yeelight QuickControl.app/Contents/Info.plist"
+          codesign --verify --deep --strict "Yeelight QuickControl.app"

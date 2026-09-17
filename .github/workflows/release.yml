@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Make Build Script Executable
+        run: chmod +x ./build.sh
+
+      - name: Validate Sources
+        run: |
+          node --check server.js
+          awk '/<script>/{f=1;next}/<\/script>/{f=0}f' dashboard.html | node --check -
+          bash -n build.sh
+
+      - name: Validate Tag Version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          test "${GITHUB_REF_NAME#v}" = "$(node -p "require('./package.json').version")"
+
+      - name: Build Application & DMG
+        run: ./build.sh --dmg
+
+      - name: Archive .app to ZIP
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent "Yeelight QuickControl.app" "YeelightQuickControl-macOS.zip"
+
+      - name: Create Checksums
+        run: |
+          shasum -a 256 YeelightQuickControl-macOS.dmg YeelightQuickControl-macOS.zip > SHA256SUMS.txt
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: YeelightQuickControl-macOS
+          path: |
+            YeelightQuickControl-macOS.dmg
+            YeelightQuickControl-macOS.zip
+            SHA256SUMS.txt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            YeelightQuickControl-macOS.dmg
+            YeelightQuickControl-macOS.zip
+            SHA256SUMS.txt
