@@ -12,6 +12,7 @@ Thumbs.db
 *.zip
 /build
 /dist
+/.yeelight-quickcontrol-build
 
 # Local Configuration & Data
 .smart-lights.json

@@ -30,6 +30,12 @@ jobs:
           awk '/<script>/{f=1;next}/<\/script>/{f=0}f' dashboard.html | node --check -
           bash -n build.sh
 
+      - name: Test Standalone Controller
+        run: npm test
+
+      - name: Test Native Controller
+        run: ./macos/Tests/run.sh
+
       - name: Validate Tag Version
         if: startsWith(github.ref, 'refs/tags/')
         run: |
@@ -55,11 +61,19 @@ jobs:
             YeelightQuickControl-macOS.zip
             SHA256SUMS.txt
 
+      - name: Extract Release Notes
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v v="## $VERSION" '$0 == v {f=1; next} /^## / && f {exit} f' CHANGELOG.md > RELEASE_NOTES.md
+          test -s RELEASE_NOTES.md || echo "See CHANGELOG.md." > RELEASE_NOTES.md
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: Release ${{ github.ref_name }}
+          name: Yeelight QuickControl ${{ github.ref_name }}
+          body_path: RELEASE_NOTES.md
           draft: false
           prerelease: false
           generate_release_notes: true
