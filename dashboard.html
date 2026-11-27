@@ -16,11 +16,10 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: #e2e8f0;
     margin: 0;
-    padding: 12px 14px 10px;
+    padding: 12px 14px 12px;
     background: transparent;
     user-select: none;
     width: 320px;
-    height: 420px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -29,23 +28,22 @@
   }
 
   .container {
-    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 2px;
+    gap: 14px;
   }
 
   /* ── Header ── */
   .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding-bottom: 4px;
+    gap: 10px;
+    padding-bottom: 2px;
   }
+  .brand { flex: 1; min-width: 0; }
 
   .brand h1 {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     letter-spacing: -0.01em;
     color: #ffffff;
@@ -84,55 +82,47 @@
   }
   .settings-btn:hover { background: rgba(255, 255, 255, 0.15); color: #ffffff; }
 
-  /* ── Power Button ── */
-  .power-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4px 0;
-    margin: 0;
-    flex-grow: 0;
-  }
-
+  /* ── Power Button (header) ── */
   .power-btn {
-    width: 80px; height: 80px;
+    width: 40px; height: 40px;
+    flex-shrink: 0;
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.05);
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    position: relative;
+    /* Fill and icon switch together, instantly, so the icon never sits on a
+       half-blended background. Only the outer glow animates. */
+    transition: transform 0.15s, box-shadow 0.3s ease-out;
   }
-  .power-btn:hover {
-    background: rgba(255, 255, 255, 0.06);
-    transform: scale(1.03);
-  }
-  .power-btn:active { transform: scale(0.96); }
+  .power-btn:hover { background-color: rgba(255, 255, 255, 0.1); transform: scale(1.05); }
+  .power-btn:active { transform: scale(0.94); }
   .power-btn svg {
-    width: 30px; height: 30px;
-    stroke: rgba(255, 255, 255, 0.45);
-    stroke-width: 2.2;
+    width: 18px; height: 18px;
+    stroke: rgba(255, 255, 255, 0.55);
+    stroke-width: 2.4;
     fill: none;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .power-btn.on {
-    background: var(--bulb-color, #ffffff);
+    background-color: var(--bulb-color, #ffffff);
     border-color: transparent;
-    box-shadow: 0 0 50px var(--primary-glow, rgba(255,255,255,0.35)), 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 0 18px var(--primary-glow, rgba(255,255,255,0.35));
   }
   .power-btn.on svg {
-    stroke: #0a0a0f;
-    transform: scale(1.05);
+    stroke: var(--bulb-ink, #0a0a0f);
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.35));
   }
+  .power-btn:disabled { cursor: default; opacity: 0.5; }
 
-  /* ── Controls Section ── */
+  /* ── Controls ── */
   .controls-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
   }
+  .light-controls { display: flex; flex-direction: column; gap: 12px; }
 
   .section-label {
     font-size: 10px;
@@ -142,25 +132,22 @@
     color: rgba(255, 255, 255, 0.35);
     margin-bottom: 4px;
   }
-
   .section { display: flex; flex-direction: column; }
 
-  /* ── Brightness Slider ── */
+  /* ── Brightness bar ── */
   .slider-container {
     position: relative;
     width: 100%;
-    height: 30px;
+    height: 36px;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.07);
     overflow: hidden;
     display: flex;
     align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.02);
   }
   .slider-fill {
     position: absolute;
-    left: 0;
-    top: 0;
+    left: 0; top: 0;
     height: 100%;
     width: 50%;
     background: var(--brightness-glow, #fbbf24);
@@ -169,10 +156,8 @@
   }
   .slider-input {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
+    width: 100%; height: 100%;
     opacity: 0;
     cursor: pointer;
     margin: 0;
@@ -185,27 +170,195 @@
     display: flex;
     justify-content: space-between;
     pointer-events: none;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: #ffffff;
     z-index: 1;
   }
-  .slider-labels span {
-    transition: color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  .slider-labels span { transition: color 0.2s; }
+  .slider-icon { font-size: 14px; display: inline-flex; align-items: center; }
+
+  /* ── White / Color segmented control ── */
+  .segmented {
+    display: flex;
+    padding: 3px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.06);
   }
-  .slider-icon {
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  .segmented button {
+    flex: 1;
+    padding: 6px 0;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
   }
-  .slider-icon svg {
-    display: block;
-    stroke: currentColor;
-    transition: stroke 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  .segmented button:hover { color: #ffffff; }
+  .segmented button.active {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    font-weight: 600;
   }
 
+  /* Both panels share a height so switching modes never shifts the layout. */
+  .mode-panel { min-height: 54px; display: flex; flex-direction: column; gap: 10px; }
+  .mode-panel[hidden] { display: none; }
+
+  /* ── Gradient tracks (temperature, hue, saturation) ── */
+  .track {
+    position: relative;
+    height: 22px;
+    border-radius: 11px;
+  }
+  .track-input {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    margin: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    outline: none;
+  }
+  .track-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    transition: transform 0.1s;
+  }
+  .track-input::-webkit-slider-thumb:hover { transform: scale(1.12); }
+  .track-input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(255,255,255,0.35); }
+  .hue-track {
+    background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+  }
+  .sat-track {
+    background: linear-gradient(to right, #ffffff, hsl(var(--sat-hue, 180), 100%, 50%));
+  }
+  .track-legend {
+    display: flex;
+    justify-content: space-between;
+    margin: -4px 2px 0;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .track-legend #tempVal { color: rgba(255, 255, 255, 0.85); font-weight: 600; }
+
+  /* ── Favorites ── */
+  .fav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 2px 8px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .link-btn {
+    border: none;
+    background: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0;
+  }
+  .link-btn:hover { color: #ffffff; }
+  .fav-actions { display: flex; align-items: center; gap: 12px; }
+  .fav-add-btn { font-size: 14px; line-height: 1; }
+  .fav-add-btn[hidden] { display: none; }
+  /* Wraps to a new row (5 per row) instead of scrolling; the popover grows with it. */
+  .fav-row {
+    position: relative; /* tiles' offsetParent, for transform-free positions while dragging */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 6px;
+    padding: 4px 2px 0;
+  }
+  .editing .fav-swatch:not(.add) { cursor: grab; touch-action: none; }
+  .fav.drag-source { opacity: 0.25; }
+  .fav.drag-source .fav-swatch { animation: none; }
+  .fav-ghost {
+    position: fixed;
+    z-index: 50;
+    pointer-events: none;
+    transform: scale(1.08);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+  }
+  .fav-ghost .fav-swatch { animation: none !important; }
+  .fav-ghost .fav-del { display: none !important; }
+  .fav {
+    position: relative;
+    width: 52px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  .fav-swatch {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s, border-color 0.2s;
+  }
+  .fav-swatch:hover { transform: scale(1.06); }
+  .fav-swatch:active { transform: scale(0.95); }
+  .fav-swatch.selected { border-color: #ffffff; }
+  .fav-swatch.add {
+    background: transparent;
+    border: 1.5px dashed rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 20px;
+    line-height: 1;
+  }
+  .fav-swatch.add:hover { border-color: rgba(255, 255, 255, 0.6); color: #ffffff; }
+  .fav-name, .fav-name-input {
+    width: 100%;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .fav-name-input {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    font-family: inherit;
+    outline: none;
+    padding: 1px 2px;
+  }
+  .editing .fav-name { cursor: text; text-decoration: underline dotted rgba(255,255,255,0.4); }
+  .fav-del {
+    position: absolute;
+    top: -5px; right: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: none;
+    background: #3a3a40;
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 18px;
+    cursor: pointer;
+    display: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .editing .fav-del { display: block; }
+  .editing .fav-swatch:not(.add) { animation: wiggle 0.35s ease-in-out infinite alternate; }
+  @keyframes wiggle { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+
+  /* ── Shortcut recorder ── */
   .shortcut-recorder {
     width: 100%;
     padding: 7px 10px;
@@ -218,7 +371,6 @@
     text-align: center;
     cursor: pointer;
     outline: none;
-    box-sizing: border-box;
     transition: all 0.2s;
   }
   .shortcut-recorder:focus, .shortcut-recorder.recording {
@@ -228,125 +380,10 @@
     box-shadow: 0 0 8px rgba(251, 191, 36, 0.25);
   }
 
-  /* ── Brightness Ticks (Ruler/Cetvel) ── */
-  .slider-ticks {
-    position: relative;
-    width: 100%;
-    height: 12px;
-    margin-top: 3px;
-    margin-bottom: 3px;
-  }
-  .tick-mark {
-    position: absolute;
-    width: 1px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateX(-50%);
-  }
-  .tick-label {
-    position: absolute;
-    font-size: 8px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.3);
-    transform: translateX(-50%);
-    top: 5px;
-  }
-
-  /* ── Preset Buttons Row ── */
-  .preset-row {
-    display: flex;
-    gap: 4px;
-    justify-content: space-between;
-    margin-top: 2px;
-  }
-  .preset-btn {
-    flex: 1;
-    padding: 4px 0;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-  }
-  .preset-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
-  }
-  .preset-btn.selected {
-    background: var(--brightness-glow, #ffffff);
-    color: #0a0a0f;
-    border-color: transparent;
-  }
-
-  /* ── Hue Slider ── */
-  .hue-container {
-    position: relative;
-    width: 100%;
-    height: 8px;
-    border-radius: 4px;
-    background: linear-gradient(to right,
-      #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000
-    );
-    display: flex;
-    align-items: center;
-  }
-  .hue-input {
-    width: 100%;
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-    margin: 0;
-    height: 20px;
-    outline: none;
-    cursor: pointer;
-  }
-  .hue-input::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: #fff;
-    border: 1px solid rgba(0,0,0,0.2);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    cursor: pointer;
-    transition: transform 0.1s;
-  }
-  .hue-input::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-  }
-
-  /* ── Temperature Row ── */
-  .temp-row {
-    display: flex;
-    gap: 4px;
-    justify-content: space-between;
-    background: rgba(255, 255, 255, 0.04);
-    padding: 4px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.02);
-  }
-  .temp-circle {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    flex-shrink: 0;
-  }
-  .temp-circle:hover { transform: scale(1.12); }
-  .temp-circle.selected {
-    border-color: #ffffff;
-    transform: scale(1.18);
-    box-shadow: 0 0 8px rgba(255,255,255,0.25);
-  }
-
   /* ── Overlays (Scan, Settings, First Launch) ── */
   .overlay {
     position: fixed; inset: 0;
-    background: rgba(10,10,15,0.85);
+    background: rgba(24,24,28,0.97);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     display: flex; align-items: center; justify-content: center;
@@ -357,150 +394,147 @@
   }
   .overlay.visible { opacity: 1; pointer-events: all; }
 
-  .scan-card {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: 16px;
-    width: 280px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    max-height: 390px;
+  .settings-panel {
+    position: absolute;
+    inset: 0;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     overflow-y: auto;
   }
-  .scan-card h2 {
-    font-size: 14px; font-weight: 600; margin-bottom: 12px;
-    color: #ffffff;
-    text-align: center;
-  }
-  .scan-btn {
-    width: 100%;
-    padding: 8px;
-    border-radius: 8px;
+  .settings-header { display: flex; align-items: center; gap: 8px; }
+  .settings-header h2 { font-size: 15px; font-weight: 600; color: #ffffff; }
+  .icon-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
     border: none;
-    background: #ffffff;
-    color: #0a0a0f;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+    display: grid; place-items: center;
     cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 10px;
   }
-  .scan-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-  .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .icon-btn:hover { background: rgba(255, 255, 255, 0.15); color: #ffffff; }
 
-  .device-list { max-height: 80px; overflow-y: auto; }
-  .device-item {
-    padding: 8px;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
-    margin-bottom: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 11.5px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .device-item:hover {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.15);
-  }
-  .device-item .ip { font-weight: 600; color: #ffffff; }
-  .device-item .port { color: rgba(255,255,255,0.4); font-size: 9.5px; }
-  .device-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; flex-shrink: 0; }
-
-  .close-btn {
-    margin-top: 8px;
-    width: 100%;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: transparent;
-    color: rgba(255, 255, 255, 0.6);
-    font-family: inherit;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .close-btn:hover { background: rgba(255,255,255,0.04); color: #ffffff; }
-
-  .scanning-text {
-    text-align: center;
-    color: rgba(255,255,255,0.5);
-    font-size: 11.5px;
-    padding: 10px 0;
-  }
-
-  .lang-select {
-    width: 100%;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  .settings-group {
+    border-radius: 10px;
     background: rgba(255, 255, 255, 0.05);
+    padding: 2px 10px;
+  }
+  .settings-row {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .settings-row + .settings-row,
+  .settings-note + .settings-row,
+  .settings-sub + .settings-row { border-top: 1px solid rgba(255, 255, 255, 0.06); }
+  .row-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .row-sub { font-size: 10.5px; color: rgba(255, 255, 255, 0.45); }
+  .row-select {
+    max-width: 150px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
     color: #ffffff;
     font-family: inherit;
     font-size: 12px;
     outline: none;
     cursor: pointer;
-    margin-bottom: 2px;
   }
-  .lang-select option {
-    background: #1a1a24;
-    color: #ffffff;
-  }
-
-  .autostart-btn {
+  .row-select option { background: #1a1a24; color: #ffffff; }
+  .settings-sub { padding-bottom: 8px; }
+  .settings-sub .shortcut-recorder { padding: 5px 10px; }
+  .settings-note {
+    display: block;
     width: 100%;
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.86);
-    font-family: inherit;
-    font-size: 11.5px;
+    margin: -4px 0 8px;
+    padding: 0;
+    border: none;
+    background: none;
     text-align: left;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .autostart-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
-  .autostart-btn.enabled { border-color: rgba(16,185,129,0.45); color: #a7f3d0; }
-  .autostart-btn.disabled { color: rgba(255,255,255,0.62); }
-  .autostart-btn:disabled { cursor: default; opacity: 0.65; }
-  .setting-hint {
-    color: rgba(255,255,255,0.38);
-    font-size: 10px;
-    line-height: 1.35;
-    margin-top: 4px;
-  }
-
-  .lang-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-    max-height: 160px;
-    overflow-y: auto;
-    padding-right: 4px;
-  }
-  .lang-grid-btn {
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.04);
-    color: #ffffff;
     font-family: inherit;
-    font-size: 11.5px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
+    font-size: 10.5px;
+    line-height: 1.35;
+    color: #fbbf24;
+    cursor: default;
   }
-  .lang-grid-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+  .settings-note.actionable { cursor: pointer; text-decoration: underline; }
+  .settings-note[hidden] { display: none; }
+
+  /* macOS-style switch */
+  .switch {
+    position: relative;
+    width: 34px; height: 20px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .switch::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s;
+  }
+  .switch[aria-checked="true"] { background: #30d158; }
+  .switch[aria-checked="true"]::after { transform: translateX(14px); }
+  .switch.pending { background: #fbbf24; }
+  .switch:disabled { opacity: 0.4; cursor: default; }
+
+  .small-btn {
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #0a0a0f;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .small-btn:hover { background: #ffffff; }
+  .small-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .device-list { max-height: 110px; overflow-y: auto; }
+  .device-list:not(:empty) { padding-bottom: 8px; }
+  .device-item {
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 4px;
+    cursor: pointer;
+    font-size: 11.5px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .device-item:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+  .device-item .ip { font-weight: 600; color: #ffffff; }
+  .device-item .ip { flex: 1; }
+  .device-item .port { color: rgba(255,255,255,0.45); font-size: 10.5px; }
+  .device-item.current .port { color: #30d158; }
+  .device-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; flex-shrink: 0; }
+
+  .scanning-text {
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 11.5px;
+    padding: 6px 0;
   }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
   .spinner {
     width: 16px; height: 16px;
     border: 2px solid rgba(255,255,255,0.1);
@@ -533,8 +567,11 @@
 </head>
 <body>
 <div class="container">
-  <!-- Header -->
+  <!-- Header: power · name & status · settings -->
   <div class="header">
+    <button class="power-btn" id="powerBtn" onclick="togglePower()" aria-label="Power">
+      <svg viewBox="0 0 24 24"><path d="M12 3v8M6.3 7.5a8 8 0 1 0 11.4 0" stroke-linecap="round"/></svg>
+    </button>
     <div class="brand">
       <h1>Yeelight QuickControl</h1>
       <div class="status">
@@ -542,119 +579,117 @@
         <span id="statusText">Waiting for connection...</span>
       </div>
     </div>
-    <button class="settings-btn" onclick="showSettings()" title="Settings">⚙</button>
+    <button class="settings-btn" onclick="showSettings()" id="settingsBtn" aria-label="Settings">⚙</button>
   </div>
 
-  <!-- Power Button -->
-  <div class="power-section">
-    <button class="power-btn" id="powerBtn" onclick="togglePower()">
-      <svg viewBox="0 0 24 24"><path d="M12 2v10M18.36 6.64A9 9 0 1 1 5.64 6.64" stroke-linecap="round"/></svg>
-    </button>
-  </div>
-
-  <!-- Controls -->
-  <div id="controls" class="controls-disabled controls-wrapper" style="gap: 4px;">
-    <!-- Brightness -->
-    <div class="section" style="margin-bottom: 12px;">
-      <div class="section-label" id="brightnessLabel">Brightness</div>
+  <div id="controls" class="controls-disabled controls-wrapper">
+    <div class="light-controls" id="lightControls">
+      <!-- Brightness -->
       <div class="slider-container">
         <div class="slider-fill" id="brightnessFill"></div>
         <div class="slider-labels">
           <span class="slider-icon" id="sliderIcon">☀</span>
           <span id="brightnessVal">50%</span>
         </div>
-        <input type="range" id="brightnessSlider" class="slider-input" min="1" max="100" value="50">
+        <input type="range" id="brightnessSlider" class="slider-input" min="1" max="100" value="50" aria-label="Brightness">
       </div>
-      <!-- Ruler Ticks -->
-      <div class="slider-ticks" id="brightnessTicks"></div>
-      <!-- Presets -->
-      <div class="preset-row" id="brightnessPresets"></div>
-    </div>
 
-    <!-- Color Hue -->
-    <div class="section" id="colorSection" style="margin-bottom: 12px;">
-      <div class="section-label" id="colorLabel">Color</div>
-      <div class="hue-container">
-        <input type="range" id="hueSlider" class="hue-input" min="0" max="359" value="180">
+      <!-- Mode -->
+      <div class="segmented" role="tablist">
+        <button id="segWhite" role="tab" onclick="selectMode('white')">White</button>
+        <button id="segColor" role="tab" onclick="selectMode('color')">Color</button>
       </div>
-    </div>
 
-    <!-- Temperature -->
-    <div class="section" id="tempSection">
-      <div class="section-label" id="tempLabel">Temperature</div>
-      <!-- Temperature Scale Slider -->
-      <div class="slider-container" style="margin-bottom: 8px;">
-        <div class="slider-fill" id="tempFill" style="background: #ffffff;"></div>
-        <div class="slider-labels">
-          <span class="slider-icon" id="tempIcon">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
-            </svg>
-          </span>
-          <span id="tempVal">4000K</span>
+      <div class="mode-panel" id="whitePanel" role="tabpanel">
+        <div class="track" id="tempTrack">
+          <input type="range" id="tempSlider" class="track-input" min="1700" max="6500" step="50" value="4000" aria-label="Temperature">
         </div>
-        <input type="range" id="tempSlider" class="slider-input" min="1700" max="6500" step="50" value="4000">
+        <div class="track-legend">
+          <span id="warmLabel">Warm</span><span id="tempVal">4000K</span><span id="coolLabel">Cool</span>
+        </div>
       </div>
-      <div class="temp-row" id="tempRow"></div>
+
+      <div class="mode-panel" id="colorPanel" role="tabpanel" hidden>
+        <div class="track hue-track">
+          <input type="range" id="hueSlider" class="track-input" min="0" max="359" value="180" aria-label="Color">
+        </div>
+        <div class="track sat-track">
+          <input type="range" id="satSlider" class="track-input" min="0" max="100" value="100" aria-label="Saturation">
+        </div>
+      </div>
+    </div>
+
+    <!-- Favorites -->
+    <div class="favorites" id="favorites">
+      <div class="fav-header">
+        <span id="favLabel">Favorites</span>
+        <span class="fav-actions">
+          <button class="link-btn fav-add-btn" id="favAddBtn" onclick="addFavorite()" aria-label="Save">＋</button>
+          <button class="link-btn" id="favEditBtn" onclick="toggleFavEdit()">Edit</button>
+        </span>
+      </div>
+      <div class="fav-row" id="favRow"></div>
     </div>
   </div>
 </div>
 
 <!-- Settings Overlay (Combined Language, Shortcut & Scanner) -->
-<div class="overlay" id="settingsOverlay">
-  <div class="scan-card">
-    <h2 id="settingsTitle">⚙ Settings</h2>
-    
-    <!-- Language Selection -->
-    <div class="section" style="margin-bottom: 10px;">
-      <div class="section-label" id="langLabel">Language</div>
-      <select id="langSelect" class="lang-select" onchange="changeLanguage(this.value)">
-        <option value="en">English</option>
-        <option value="tr">Türkçe</option>
-        <option value="fr">Français</option>
-        <option value="pt">Português</option>
-        <option value="zh">中文</option>
-        <option value="de">Deutsch</option>
-        <option value="it">Italiano</option>
-      </select>
-    </div>
-
-    <!-- Autostart -->
-    <div class="section" style="margin-bottom: 10px;">
-      <div class="section-label" id="autostartLabel">Start automatically</div>
-      <button class="autostart-btn disabled" id="autostartBtn" onclick="toggleAutostart()" disabled>
-        <span id="autostartText">Checking...</span>
+<div class="overlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="settings-panel">
+    <div class="settings-header">
+      <button class="icon-btn" id="closeSettingsBtn" onclick="hideSettings()" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <div class="setting-hint" id="autostartHint">Open Yeelight QuickControl automatically when you sign in to macOS.</div>
+      <h2 id="settingsTitle">Settings</h2>
     </div>
 
-    <!-- Keyboard Shortcut -->
-    <div class="section" style="margin-bottom: 10px;">
-      <div class="section-label" id="shortcutLabel">Hotkey</div>
-      <select id="shortcutSelect" class="lang-select" onchange="onShortcutSelectChange(this.value)">
-        <option value="None">None</option>
-        <option value="Ctrl + Shift + L">Ctrl + Shift + L</option>
-        <option value="Ctrl + Shift + Space">Ctrl + Shift + Space</option>
-        <option value="Cmd + Shift + L">Cmd + Shift + L</option>
-        <option value="Option + Shift + L">Option + Shift + L</option>
-        <option value="Ctrl + Option + L">Ctrl + Option + L</option>
-        <option value="Custom" id="optCustom">Custom Combination... / Özel...</option>
-      </select>
-      <div id="customShortcutBox" style="display: none; margin-top: 6px;">
+    <div class="settings-group">
+      <div class="settings-row">
+        <label for="langSelect" id="langLabel">Language</label>
+        <select id="langSelect" class="row-select" onchange="changeLanguage(this.value)">
+          <option value="en">English</option>
+          <option value="tr">Türkçe</option>
+          <option value="fr">Français</option>
+          <option value="pt">Português</option>
+          <option value="zh">中文</option>
+          <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+        </select>
+      </div>
+      <div class="settings-row">
+        <span id="autostartLabel">Start at login</span>
+        <button class="switch" id="autostartBtn" role="switch" aria-checked="false" aria-labelledby="autostartLabel" onclick="toggleAutostart()" disabled></button>
+      </div>
+      <button class="settings-note" id="autostartHint" onclick="onAutostartHintClick()" hidden></button>
+      <div class="settings-row">
+        <label for="shortcutSelect" id="shortcutLabel">Hotkey</label>
+        <select id="shortcutSelect" class="row-select" onchange="onShortcutSelectChange(this.value)">
+          <option value="None">—</option>
+          <option value="Ctrl + Shift + L">⌃⇧L</option>
+          <option value="Ctrl + Shift + Space">⌃⇧Space</option>
+          <option value="Cmd + Shift + L">⌘⇧L</option>
+          <option value="Option + Shift + L">⌥⇧L</option>
+          <option value="Ctrl + Option + L">⌃⌥L</option>
+          <option value="Custom" id="optCustom">Custom…</option>
+        </select>
+      </div>
+      <div id="customShortcutBox" class="settings-sub" style="display: none;">
         <div id="shortcutRecorder" class="shortcut-recorder" tabindex="0" onclick="startRecordingShortcut()" onkeydown="handleShortcutKeyDown(event)">
-          <span id="recorderText">Press keys... / Tuşlara basın...</span>
+          <span id="recorderText">Press keys…</span>
         </div>
       </div>
     </div>
 
-    <!-- Device Scanner -->
-    <div class="section" style="margin-bottom: 6px;">
-      <div class="section-label" id="deviceLabel">Find Device</div>
-      <button class="scan-btn" id="scanBtn" onclick="startScan()">Scan Network</button>
+    <div class="settings-group">
+      <div class="settings-row">
+        <div class="row-main">
+          <span id="deviceLabel">Bulb</span>
+          <span class="row-sub" id="deviceInfo">—</span>
+        </div>
+        <button class="small-btn" id="scanBtn" onclick="startScan()">Scan</button>
+      </div>
       <div id="scanResults" class="device-list"></div>
     </div>
-    
-    <button class="close-btn" id="closeSettingsBtn" onclick="hideSettings()">Close</button>
   </div>
 </div>
 
@@ -662,6 +697,30 @@
   // ── Translations ──
   const i18n = {
     en: {
+      dragHint: "Drag to reorder",
+      startAtLogin: "Start at login",
+      autostartApproval: "Waiting for approval in System Settings — click to open.",
+      autostartMoveApp: "Move the app to the Applications folder so it can start at login.",
+      autostartError: "Couldn't change: ",
+      scanShort: "Scan",
+      bulb: "Bulb",
+      noDevice: "No bulb selected",
+      white: "White",
+      colorMode: "Color",
+      warm: "Warm",
+      cool: "Cool",
+      favorites: "Favorites",
+      edit: "Edit",
+      done: "Done",
+      save: "Save",
+      delete: "Delete",
+      favReading: "Reading",
+      favEvening: "Evening",
+      favNight: "Night",
+      favMovie: "Movie",
+      favDefault: "Favorite",
+      powerOn: "On",
+      powerOff: "Off",
       statusConnected: "Connected",
       statusDisconnected: "No connection",
       statusWaiting: "Waiting for connection...",
@@ -688,9 +747,35 @@
       autostartEnabled: "Enabled — click to turn off",
       autostartDisabled: "Disabled — click to turn on",
       autostartHint: "Open Yeelight QuickControl automatically when you sign in to macOS.",
-      autostartAppOnly: "Available in the macOS app"
+      autostartAppOnly: "Available in the macOS app",
+      saturation: "Saturation",
+      statusReconnecting: "Reconnecting..."
     },
     tr: {
+      dragHint: "Sürükleyerek sırala",
+      startAtLogin: "Girişte başlat",
+      autostartApproval: "Sistem Ayarları'nda onay bekliyor — açmak için tıklayın.",
+      autostartMoveApp: "Girişte başlayabilmesi için uygulamayı Uygulamalar klasörüne taşıyın.",
+      autostartError: "Değiştirilemedi: ",
+      scanShort: "Tara",
+      bulb: "Ampul",
+      noDevice: "Ampul seçilmedi",
+      white: "Beyaz",
+      colorMode: "Renk",
+      warm: "Sıcak",
+      cool: "Soğuk",
+      favorites: "Favoriler",
+      edit: "Düzenle",
+      done: "Bitti",
+      save: "Kaydet",
+      delete: "Sil",
+      favReading: "Okuma",
+      favEvening: "Akşam",
+      favNight: "Gece",
+      favMovie: "Film",
+      favDefault: "Favori",
+      powerOn: "Açık",
+      powerOff: "Kapalı",
       statusConnected: "Bağlı",
       statusDisconnected: "Bağlantı yok",
       statusWaiting: "Bağlantı bekleniyor...",
@@ -717,9 +802,35 @@
       autostartEnabled: "Açık — kapatmak için tıklayın",
       autostartDisabled: "Kapalı — açmak için tıklayın",
       autostartHint: "macOS’a giriş yaptığınızda Yeelight QuickControl otomatik olarak açılsın.",
-      autostartAppOnly: "Yalnızca macOS uygulamasında kullanılabilir"
+      autostartAppOnly: "Yalnızca macOS uygulamasında kullanılabilir",
+      saturation: "Doygunluk",
+      statusReconnecting: "Yeniden bağlanıyor..."
     },
     fr: {
+      dragHint: "Glissez pour réorganiser",
+      startAtLogin: "Ouvrir à la connexion",
+      autostartApproval: "En attente d’autorisation dans Réglages Système — cliquez pour ouvrir.",
+      autostartMoveApp: "Placez l’app dans le dossier Applications pour qu’elle s’ouvre à la connexion.",
+      autostartError: "Modification impossible : ",
+      scanShort: "Rechercher",
+      bulb: "Ampoule",
+      noDevice: "Aucune ampoule",
+      white: "Blanc",
+      colorMode: "Couleur",
+      warm: "Chaud",
+      cool: "Froid",
+      favorites: "Favoris",
+      edit: "Modifier",
+      done: "Terminé",
+      save: "Enregistrer",
+      delete: "Supprimer",
+      favReading: "Lecture",
+      favEvening: "Soirée",
+      favNight: "Nuit",
+      favMovie: "Film",
+      favDefault: "Favori",
+      powerOn: "Allumée",
+      powerOff: "Éteinte",
       statusConnected: "Connecté",
       statusDisconnected: "Pas de connexion",
       statusWaiting: "En attente de connexion...",
@@ -746,9 +857,35 @@
       autostartEnabled: "Activé — cliquer pour désactiver",
       autostartDisabled: "Désactivé — cliquer pour activer",
       autostartHint: "Ouvrir Yeelight QuickControl automatiquement à la connexion.",
-      autostartAppOnly: "Disponible dans l’application macOS"
+      autostartAppOnly: "Disponible dans l’application macOS",
+      saturation: "Saturation",
+      statusReconnecting: "Reconnexion..."
     },
     pt: {
+      dragHint: "Arraste para reordenar",
+      startAtLogin: "Abrir ao iniciar sessão",
+      autostartApproval: "Aguardando aprovação nos Ajustes do Sistema — clique para abrir.",
+      autostartMoveApp: "Mova o app para a pasta Aplicativos para abrir ao iniciar sessão.",
+      autostartError: "Não foi possível alterar: ",
+      scanShort: "Buscar",
+      bulb: "Lâmpada",
+      noDevice: "Nenhuma lâmpada",
+      white: "Branco",
+      colorMode: "Cor",
+      warm: "Quente",
+      cool: "Frio",
+      favorites: "Favoritos",
+      edit: "Editar",
+      done: "Concluir",
+      save: "Salvar",
+      delete: "Excluir",
+      favReading: "Leitura",
+      favEvening: "Entardecer",
+      favNight: "Noite",
+      favMovie: "Filme",
+      favDefault: "Favorito",
+      powerOn: "Ligada",
+      powerOff: "Desligada",
       statusConnected: "Conectado",
       statusDisconnected: "Sem conexão",
       statusWaiting: "Aguardando conexão...",
@@ -775,9 +912,35 @@
       autostartEnabled: "Ativado — clique para desativar",
       autostartDisabled: "Desativado — clique para ativar",
       autostartHint: "Abrir o Yeelight QuickControl automaticamente ao iniciar sessão no macOS.",
-      autostartAppOnly: "Disponível no app macOS"
+      autostartAppOnly: "Disponível no app macOS",
+      saturation: "Saturação",
+      statusReconnecting: "Reconectando..."
     },
     zh: {
+      dragHint: "拖动以排序",
+      startAtLogin: "登录时打开",
+      autostartApproval: "等待在“系统设置”中批准 — 点按以打开。",
+      autostartMoveApp: "请将应用移到“应用程序”文件夹，才能在登录时打开。",
+      autostartError: "无法更改：",
+      scanShort: "扫描",
+      bulb: "灯泡",
+      noDevice: "未选择灯泡",
+      white: "白光",
+      colorMode: "彩光",
+      warm: "暖",
+      cool: "冷",
+      favorites: "收藏",
+      edit: "编辑",
+      done: "完成",
+      save: "保存",
+      delete: "删除",
+      favReading: "阅读",
+      favEvening: "傍晚",
+      favNight: "夜晚",
+      favMovie: "电影",
+      favDefault: "收藏",
+      powerOn: "开",
+      powerOff: "关",
       statusConnected: "已连接",
       statusDisconnected: "未连接",
       statusWaiting: "正在等待连接...",
@@ -804,9 +967,35 @@
       autostartEnabled: "已启用 — 点击关闭",
       autostartDisabled: "已停用 — 点击开启",
       autostartHint: "登录 macOS 时自动打开 Yeelight QuickControl。",
-      autostartAppOnly: "仅适用于 macOS 应用"
+      autostartAppOnly: "仅适用于 macOS 应用",
+      saturation: "饱和度",
+      statusReconnecting: "正在重新连接..."
     },
     de: {
+      dragHint: "Zum Sortieren ziehen",
+      startAtLogin: "Bei Anmeldung öffnen",
+      autostartApproval: "Wartet auf Freigabe in den Systemeinstellungen — zum Öffnen klicken.",
+      autostartMoveApp: "Verschiebe die App in den Ordner „Programme“, damit sie bei der Anmeldung startet.",
+      autostartError: "Ändern fehlgeschlagen: ",
+      scanShort: "Suchen",
+      bulb: "Lampe",
+      noDevice: "Keine Lampe gewählt",
+      white: "Weiß",
+      colorMode: "Farbe",
+      warm: "Warm",
+      cool: "Kalt",
+      favorites: "Favoriten",
+      edit: "Bearbeiten",
+      done: "Fertig",
+      save: "Sichern",
+      delete: "Löschen",
+      favReading: "Lesen",
+      favEvening: "Abend",
+      favNight: "Nacht",
+      favMovie: "Film",
+      favDefault: "Favorit",
+      powerOn: "An",
+      powerOff: "Aus",
       statusConnected: "Verbunden",
       statusDisconnected: "Keine Verbindung",
       statusWaiting: "Warten auf Verbindung...",
@@ -833,9 +1022,35 @@
       autostartEnabled: "Aktiviert — zum Deaktivieren klicken",
       autostartDisabled: "Deaktiviert — zum Aktivieren klicken",
       autostartHint: "Yeelight QuickControl bei der macOS-Anmeldung automatisch öffnen.",
-      autostartAppOnly: "In der macOS-App verfügbar"
+      autostartAppOnly: "In der macOS-App verfügbar",
+      saturation: "Sättigung",
+      statusReconnecting: "Verbindung wird wiederhergestellt..."
     },
     it: {
+      dragHint: "Trascina per riordinare",
+      startAtLogin: "Apri al login",
+      autostartApproval: "In attesa di approvazione in Impostazioni di Sistema — clicca per aprire.",
+      autostartMoveApp: "Sposta l’app nella cartella Applicazioni per aprirla al login.",
+      autostartError: "Impossibile modificare: ",
+      scanShort: "Cerca",
+      bulb: "Lampadina",
+      noDevice: "Nessuna lampadina",
+      white: "Bianco",
+      colorMode: "Colore",
+      warm: "Caldo",
+      cool: "Freddo",
+      favorites: "Preferiti",
+      edit: "Modifica",
+      done: "Fine",
+      save: "Salva",
+      delete: "Elimina",
+      favReading: "Lettura",
+      favEvening: "Sera",
+      favNight: "Notte",
+      favMovie: "Film",
+      favDefault: "Preferito",
+      powerOn: "Accesa",
+      powerOff: "Spenta",
       statusConnected: "Connesso",
       statusDisconnected: "Nessuna connessione",
       statusWaiting: "In attesa di connessione...",
@@ -862,69 +1077,46 @@
       autostartEnabled: "Attivo — clicca per disattivare",
       autostartDisabled: "Disattivato — clicca per attivare",
       autostartHint: "Apri Yeelight QuickControl automaticamente all’accesso a macOS.",
-      autostartAppOnly: "Disponibile nell’app macOS"
+      autostartAppOnly: "Disponibile nell’app macOS",
+      saturation: "Saturazione",
+      statusReconnecting: "Riconnessione..."
     }
   };
 
   // ── State ──
-  let state = { connected: false, props: {} };
+  let state = { connected: false, props: {}, favorites: null };
   let currentLang = 'en';
-  let autostartEnabled = false;
-  let autostartAvailable = false;
+  let autostart = { state: 'unavailable', detail: null, busy: false };
 
-  // ── Temperature presets ──
+  // ── Color temperature palette (also used to tint the UI) ──
   const temps = [
-    { k: 1700, color: '#f3bd4e' },
-    { k: 2300, color: '#f7ce6f' },
-    { k: 2900, color: '#fbe095' },
-    { k: 3500, color: '#fff0bd' },
-    { k: 4100, color: '#ffffff' },
-    { k: 4700, color: '#d0e5f5' },
-    { k: 5300, color: '#a2c8e6' },
-    { k: 5900, color: '#7baed1' },
-    { k: 6500, color: '#5795bd' }
+    { k: 1700, color: '#ff9a2e' },
+    { k: 2700, color: '#ffc46b' },
+    { k: 3500, color: '#ffe3ad' },
+    { k: 4300, color: '#fff6e6' },
+    { k: 5300, color: '#e6f0ff' },
+    { k: 6500, color: '#a9c8ff' }
   ];
+  document.getElementById('tempTrack').style.background =
+    'linear-gradient(to right, ' + temps.map(t => t.color).join(', ') + ')';
 
-  // Render temperature circles
-  const tempRow = document.getElementById('tempRow');
-  temps.forEach(t => {
-    const el = document.createElement('div');
-    el.className = 'temp-circle';
-    el.style.background = t.color;
-    el.dataset.k = t.k;
-    el.onclick = () => setTemp(t.k);
-    tempRow.appendChild(el);
-  });
+  function ctColor(k) {
+    k = Math.min(Math.max(Number(k) || 4000, 1700), 6500);
+    for (let i = 1; i < temps.length; i++) {
+      if (k <= temps[i].k) {
+        const a = temps[i - 1], b = temps[i];
+        const f = (k - a.k) / (b.k - a.k);
+        const mix = (o) => Math.round(parseInt(a.color.substr(o, 2), 16) * (1 - f) + parseInt(b.color.substr(o, 2), 16) * f);
+        return '#' + [1, 3, 5].map(o => mix(o).toString(16).padStart(2, '0')).join('');
+      }
+    }
+    return temps[temps.length - 1].color;
+  }
 
-  // ── Brightness Ruler Ticks (Cetvel) ──
-  const ticks = [1, 15, 30, 50, 75, 100];
-  const ticksContainer = document.getElementById('brightnessTicks');
-  ticks.forEach(val => {
-    // tick mark line
-    const mark = document.createElement('div');
-    mark.className = 'tick-mark';
-    mark.style.left = val + '%';
-    
-    // tick label number
-    const label = document.createElement('div');
-    label.className = 'tick-label';
-    label.style.left = val + '%';
-    label.textContent = val === 1 ? '0' : val;
-
-    ticksContainer.appendChild(mark);
-    ticksContainer.appendChild(label);
-  });
-
-  // ── Brightness Presets ──
-  const brPresets = [15, 30, 50, 75, 100];
-  const brPresetsRow = document.getElementById('brightnessPresets');
-  brPresets.forEach(val => {
-    const el = document.createElement('button');
-    el.className = 'preset-btn';
-    el.textContent = val + '%';
-    el.onclick = () => setBrightness(val);
-    brPresetsRow.appendChild(el);
-  });
+  function hsvColor(hue, sat) {
+    const s = sat === undefined ? 100 : Number(sat);
+    return 'hsl(' + (Number(hue) || 0) + ', ' + s + '%, ' + (100 - Math.round(s * 0.35)) + '%)';
+  }
 
   // ── API helpers ──
   async function api(path, method = 'GET', body = null) {
@@ -941,18 +1133,26 @@
     const t = i18n[currentLang] || i18n.en;
     
     // Labels
-    document.getElementById('brightnessLabel').textContent = t.brightness;
-    document.getElementById('colorLabel').textContent = t.color;
-    document.getElementById('tempLabel').textContent = t.temperature;
+    document.getElementById('segWhite').textContent = t.white;
+    document.getElementById('segColor').textContent = t.colorMode;
+    document.getElementById('warmLabel').textContent = t.warm;
+    document.getElementById('coolLabel').textContent = t.cool;
+    document.getElementById('favLabel').textContent = t.favorites;
+    document.getElementById('brightnessSlider').setAttribute('aria-label', t.brightness);
+    document.getElementById('tempSlider').setAttribute('aria-label', t.temperature);
+    document.getElementById('hueSlider').setAttribute('aria-label', t.color);
+    document.getElementById('satSlider').setAttribute('aria-label', t.saturation);
+    document.getElementById('settingsBtn').setAttribute('aria-label', t.settings);
+    lastFavRenderKey = '';
+    renderFavorites();
     
     // Settings panel
-    document.getElementById('settingsTitle').textContent = '⚙ ' + t.settings;
+    document.getElementById('settingsTitle').textContent = t.settings;
     document.getElementById('langLabel').textContent = t.selectLanguage;
     document.getElementById('shortcutLabel').textContent = t.hotkey;
-    document.getElementById('deviceLabel').textContent = t.findDevice;
-    document.getElementById('closeSettingsBtn').textContent = t.close;
-    document.getElementById('autostartLabel').textContent = t.autostart;
-    document.getElementById('autostartHint').textContent = autostartAvailable ? t.autostartHint : t.autostartAppOnly;
+    document.getElementById('deviceLabel').textContent = t.bulb;
+    document.getElementById('closeSettingsBtn').setAttribute('aria-label', t.close);
+    document.getElementById('autostartLabel').textContent = t.startAtLogin;
     updateAutostartUI();
     
     const optCustom = document.getElementById('optCustom');
@@ -964,33 +1164,53 @@
     }
     
     const scanBtn = document.getElementById('scanBtn');
-    if (!scanBtn.disabled) {
-      scanBtn.textContent = scanBtn.dataset.scanned ? t.rescan : t.scanNetwork;
-    }
+    if (!scanBtn.disabled) scanBtn.textContent = t.scanShort;
+    updateDeviceInfo();
   }
 
   function updateAutostartUI() {
     const t = i18n[currentLang] || i18n.en;
-    const button = document.getElementById('autostartBtn');
-    const text = document.getElementById('autostartText');
-    if (!button || !text) return;
-    button.disabled = !autostartAvailable;
-    button.className = 'autostart-btn ' + (autostartEnabled ? 'enabled' : 'disabled');
-    text.textContent = autostartAvailable
-      ? (autostartEnabled ? t.autostartEnabled : t.autostartDisabled)
-      : t.autostartAppOnly;
+    const sw = document.getElementById('autostartBtn');
+    const hint = document.getElementById('autostartHint');
+    if (!sw || !hint) return;
+    const available = autostart.state !== 'unavailable';
+    sw.disabled = !available || autostart.busy;
+    sw.setAttribute('aria-checked', String(autostart.state === 'enabled'));
+    sw.classList.toggle('pending', autostart.state === 'approval');
+
+    let note = '';
+    let actionable = false;
+    if (!available) note = t.autostartAppOnly;
+    else if (autostart.state === 'approval') { note = t.autostartApproval; actionable = true; }
+    else if (autostart.detail === 'notInApplications') note = t.autostartMoveApp;
+    else if (autostart.detail) note = t.autostartError + autostart.detail;
+    hint.hidden = !note;
+    hint.textContent = note;
+    hint.classList.toggle('actionable', actionable);
   }
 
-  function setAutostartStatus(enabled, available = true) {
-    autostartEnabled = !!enabled;
-    autostartAvailable = !!available;
+  /** Called by the macOS app: { state: "enabled" | "disabled" | "approval", detail: string | null }. */
+  function setAutostartStatus(status) {
+    autostart = Object.assign({ state: 'disabled', detail: null }, status || {}, { busy: false });
     updateAutostartUI();
   }
 
+  function nativeHandler(name) {
+    return window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers[name];
+  }
+
   function toggleAutostart() {
-    if (!autostartAvailable || !window.webkit || !window.webkit.messageHandlers || !window.webkit.messageHandlers.loginItemUpdated) return;
-    document.getElementById('autostartBtn').disabled = true;
-    window.webkit.messageHandlers.loginItemUpdated.postMessage(!autostartEnabled);
+    const handler = nativeHandler('loginItemUpdated');
+    if (!handler || autostart.state === 'unavailable') return;
+    if (autostart.state === 'approval') return onAutostartHintClick();
+    autostart.busy = true;
+    updateAutostartUI();
+    handler.postMessage(autostart.state !== 'enabled');
+  }
+
+  function onAutostartHintClick() {
+    const handler = nativeHandler('openLoginItemsSettings');
+    if (handler && autostart.state === 'approval') handler.postMessage(true);
   }
 
   async function changeLanguage(lang) {
@@ -1133,84 +1353,380 @@
     return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
   }
 
-  async function togglePower() {
+  async function sendCommand(method, params, optimistic) {
+    try {
+      await api('command', 'POST', { method, params });
+      Object.assign(state.props, optimistic);
+      updateUI();
+    } catch (e) {
+      await poll();
+    }
+  }
+
+  function togglePower() {
     const newPower = state.props.power === 'on' ? 'off' : 'on';
+    return sendCommand('set_power', [newPower, 'smooth', 300], { power: newPower });
+  }
+
+  function setBrightness(val) {
+    return sendCommand('set_bright', [Number(val), 'smooth', 300], { bright: String(val) });
+  }
+
+  function setColor(hue, sat) {
+    return sendCommand('set_hsv', [Number(hue), Number(sat), 'smooth', 300],
+      { hue: String(hue), sat: String(sat), color_mode: '3' });
+  }
+
+  function setTemp(k) {
+    return sendCommand('set_ct_abx', [Number(k), 'smooth', 300], { ct: String(k), color_mode: '2' });
+  }
+
+  // ── Mode (White / Color) ──
+  function currentMode() {
+    return state.props && state.props.color_mode === '2' ? 'white' : 'color';
+  }
+
+  function selectMode(mode) {
+    if (!state.connected) return;
+    if (mode === currentMode() && state.props.power === 'on') return;
+    if (mode === 'color') setColor(hueSliderEl.value, satSliderEl.value);
+    else setTemp(tempSlider.value);
+  }
+
+  // ── Favorites ──
+  // `state.favorites` is null until the user saves or edits; until then we
+  // show localized defaults so they follow the selected language.
+  let favEditing = false;
+  let renamingIndex = -1;
+  let lastFavRenderKey = '';
+
+  function defaultFavorites() {
+    const t = i18n[currentLang] || i18n.en;
+    return [
+      { name: t.favReading, mode: 'ct', ct: 4000, bright: 80 },
+      { name: t.favEvening, mode: 'ct', ct: 2700, bright: 45 },
+      { name: t.favNight, mode: 'ct', ct: 1700, bright: 5 },
+      { name: t.favMovie, mode: 'hsv', hue: 250, sat: 60, bright: 25 }
+    ];
+  }
+
+  function favoritesList() {
+    return Array.isArray(state.favorites) ? state.favorites : defaultFavorites();
+  }
+
+  function favColor(f) {
+    return f.mode === 'ct' ? ctColor(f.ct) : hsvColor(f.hue, f.sat);
+  }
+
+  function currentScene() {
+    const p = state.props || {};
+    const bright = Math.min(Math.max(Number(p.bright) || 100, 1), 100);
+    if (currentMode() === 'white') {
+      return { mode: 'ct', ct: Math.min(Math.max(Number(p.ct) || 4000, 1700), 6500), bright };
+    }
+    return { mode: 'hsv', hue: Number(p.hue) || 0, sat: p.sat === undefined ? 100 : Number(p.sat), bright };
+  }
+
+  function matchesCurrent(f) {
+    if (!state.connected || state.props.power !== 'on') return false;
+    const c = currentScene();
+    if (f.mode !== c.mode || Math.abs(f.bright - c.bright) > 2) return false;
+    return f.mode === 'ct'
+      ? Math.abs(f.ct - c.ct) <= 60
+      : Math.abs(f.hue - c.hue) <= 2 && Math.abs(f.sat - c.sat) <= 2;
+  }
+
+  function applyFavorite(f) {
+    const params = f.mode === 'ct' ? ['ct', f.ct, f.bright] : ['hsv', f.hue, f.sat, f.bright];
+    const optimistic = f.mode === 'ct'
+      ? { power: 'on', bright: String(f.bright), ct: String(f.ct), color_mode: '2' }
+      : { power: 'on', bright: String(f.bright), hue: String(f.hue), sat: String(f.sat), color_mode: '3' };
+    return sendCommand('set_scene', params, optimistic);
+  }
+
+  async function persistFavorites(list) {
     try {
-      await api('command', 'POST', { method: 'set_power', params: [newPower, 'smooth', 300] });
-      state.props.power = newPower;
-      updateUI();
+      const res = await api('favorites', 'POST', { favorites: list });
+      state.favorites = res.favorites;
     } catch (e) {
       await poll();
+    }
+    lastFavRenderKey = '';
+    renderFavorites();
+  }
+
+  async function addFavorite() {
+    const list = favoritesList().slice();
+    if (list.length >= 12) return;
+    const t = i18n[currentLang] || i18n.en;
+    list.push(Object.assign({ name: t.favDefault + ' ' + (list.length + 1) }, currentScene()));
+    await persistFavorites(list);
+    renamingIndex = favoritesList().length - 1;
+    lastFavRenderKey = '';
+    renderFavorites();
+  }
+
+  function deleteFavorite(index) {
+    const list = favoritesList().slice();
+    list.splice(index, 1);
+    persistFavorites(list);
+  }
+
+  function renameFavorite(index, name) {
+    renamingIndex = -1;
+    const trimmed = name.trim().slice(0, 24);
+    const list = favoritesList().map(f => Object.assign({}, f));
+    if (!trimmed || !list[index] || list[index].name === trimmed) {
+      lastFavRenderKey = '';
+      return renderFavorites();
+    }
+    list[index].name = trimmed;
+    persistFavorites(list);
+  }
+
+  function toggleFavEdit() {
+    favEditing = !favEditing;
+    renamingIndex = -1;
+    lastFavRenderKey = '';
+    renderFavorites();
+  }
+
+  // Built-in favorite names stay in the current UI language until the user renames them.
+  const DEFAULT_FAV_KEYS = ['favReading', 'favEvening', 'favNight', 'favMovie'];
+  function displayName(f) {
+    const t = i18n[currentLang] || i18n.en;
+    const key = DEFAULT_FAV_KEYS.find(k => Object.values(i18n).some(d => d[k] === f.name));
+    return key ? t[key] : f.name;
+  }
+
+  function renderFavorites() {
+    if (favDrag && favDrag.active) return;
+    const list = favoritesList();
+    const selected = list.findIndex(matchesCurrent);
+    const key = JSON.stringify([list, selected, favEditing, renamingIndex, currentLang, state.connected]);
+    if (key === lastFavRenderKey) return;
+    // Don't rebuild under the user's cursor while they type a name.
+    if (document.activeElement && document.activeElement.classList.contains('fav-name-input')) return;
+    lastFavRenderKey = key;
+
+    const t = i18n[currentLang] || i18n.en;
+    const row = document.getElementById('favRow');
+    document.getElementById('favorites').classList.toggle('editing', favEditing);
+    document.getElementById('favEditBtn').textContent = favEditing ? t.done : t.edit;
+    document.getElementById('favLabel').textContent = favEditing ? t.dragHint : t.favorites;
+    const focusedIndex = document.activeElement && document.activeElement.dataset
+      ? document.activeElement.dataset.favIndex : undefined;
+    row.replaceChildren();
+
+    list.forEach((f, i) => {
+      const name = displayName(f);
+      const tile = document.createElement('div');
+      tile.className = 'fav';
+      tile.dataset.index = String(i);
+
+      const swatch = document.createElement('button');
+      swatch.className = 'fav-swatch' + (i === selected ? ' selected' : '');
+      swatch.dataset.favIndex = String(i);
+      swatch.style.background = favColor(f);
+      swatch.style.opacity = String(0.55 + 0.45 * (f.bright / 100));
+      swatch.title = name + ' · ' + f.bright + '%' + (f.mode === 'ct' ? ' · ' + f.ct + 'K' : '');
+      swatch.setAttribute('aria-label', swatch.title);
+      swatch.onclick = () => { if (!favEditing) applyFavorite(f); };
+      swatch.addEventListener('pointerdown', (e) => onFavPointerDown(e, tile));
+      swatch.addEventListener('keydown', (e) => onFavKeyDown(e, i));
+      tile.appendChild(swatch);
+
+      if (renamingIndex === i) {
+        const input = document.createElement('input');
+        input.className = 'fav-name-input';
+        input.value = name;
+        input.maxLength = 24;
+        input.onkeydown = (e) => {
+          if (e.key === 'Enter') input.blur();
+          if (e.key === 'Escape') { input.value = name; input.blur(); }
+        };
+        input.onblur = () => renameFavorite(i, input.value === name ? f.name : input.value);
+        tile.appendChild(input);
+        setTimeout(() => { input.focus(); input.select(); }, 0);
+      } else {
+        const label = document.createElement('span');
+        label.className = 'fav-name';
+        label.textContent = name;
+        label.onclick = () => {
+          if (!favEditing) return;
+          renamingIndex = i;
+          lastFavRenderKey = '';
+          renderFavorites();
+        };
+        tile.appendChild(label);
+      }
+
+      const del = document.createElement('button');
+      del.className = 'fav-del';
+      del.textContent = '×';
+      del.setAttribute('aria-label', t.delete + ' ' + name);
+      del.onclick = () => deleteFavorite(i);
+      tile.appendChild(del);
+
+      row.appendChild(tile);
+    });
+
+    const addBtn = document.getElementById('favAddBtn');
+    addBtn.hidden = favEditing || !state.connected || list.length >= 12 || list.length === 0;
+    addBtn.title = t.save;
+    addBtn.setAttribute('aria-label', t.save);
+    // With an empty list, offer a full-size "+" tile instead of the header button.
+    if (list.length === 0 && state.connected) {
+      const tile = document.createElement('div');
+      tile.className = 'fav fav-add';
+      const add = document.createElement('button');
+      add.className = 'fav-swatch add';
+      add.textContent = '+';
+      add.setAttribute('aria-label', t.save);
+      add.onclick = addFavorite;
+      const label = document.createElement('span');
+      label.className = 'fav-name';
+      label.textContent = t.save;
+      tile.append(add, label);
+      row.appendChild(tile);
+    }
+
+    if (focusedIndex !== undefined) {
+      const again = row.querySelector('[data-fav-index="' + focusedIndex + '"]');
+      if (again) again.focus();
+    }
+    reportHeight();
+  }
+
+  // ── Favorites: drag to reorder (edit mode) ──
+  let favDrag = null;
+
+  function onFavPointerDown(e, tile) {
+    if (!favEditing || e.button !== 0) return;
+    e.preventDefault();
+    favDrag = { tile, startX: e.clientX, startY: e.clientY, active: false, ghost: null, offsetX: 0, offsetY: 0 };
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) { /* synthetic or already released pointer */ }
+  }
+
+  document.addEventListener('pointermove', (e) => {
+    if (!favDrag) return;
+    if (!favDrag.active) {
+      if (Math.hypot(e.clientX - favDrag.startX, e.clientY - favDrag.startY) < 4) return;
+      startFavDrag();
+    }
+    const g = favDrag.ghost;
+    g.style.left = (e.clientX - favDrag.offsetX) + 'px';
+    g.style.top = (e.clientY - favDrag.offsetY) + 'px';
+    moveFavDragTo(e.clientX, e.clientY);
+  });
+
+  document.addEventListener('pointerup', finishFavDrag);
+  document.addEventListener('pointercancel', finishFavDrag);
+
+  function startFavDrag() {
+    const tile = favDrag.tile;
+    const rect = tile.getBoundingClientRect();
+    favDrag.active = true;
+    favDrag.offsetX = favDrag.startX - rect.left;
+    favDrag.offsetY = favDrag.startY - rect.top;
+    const ghost = tile.cloneNode(true);
+    ghost.classList.add('fav-ghost');
+    ghost.style.width = rect.width + 'px';
+    ghost.style.left = rect.left + 'px';
+    ghost.style.top = rect.top + 'px';
+    document.body.appendChild(ghost);
+    favDrag.ghost = ghost;
+    tile.classList.add('drag-source');
+  }
+
+  /** Moves the source tile to where the pointer is, animating the others (FLIP). */
+  function moveFavDragTo(x, y) {
+    const row = document.getElementById('favRow');
+    const tiles = Array.from(row.querySelectorAll('.fav:not(.fav-add)'));
+    // Layout positions (offsetLeft/Top) ignore the FLIP transforms still
+    // animating, so hit-testing stays correct during fast drags.
+    const origin = row.getBoundingClientRect();
+    const pos = (el) => ({ x: el.offsetLeft, y: el.offsetTop });
+    let target = null;
+    let best = Infinity;
+    for (const el of tiles) {
+      const cx = origin.left + el.offsetLeft + el.offsetWidth / 2;
+      const cy = origin.top + el.offsetTop + el.offsetHeight / 2;
+      const d = Math.hypot(x - cx, y - cy);
+      if (d < best) { best = d; target = el; }
+    }
+    const source = favDrag.tile;
+    if (!target || target === source || best > 60) return;
+
+    const before = new Map(tiles.map(el => [el, pos(el)]));
+    const sourcePos = tiles.indexOf(source);
+    const targetPos = tiles.indexOf(target);
+    row.insertBefore(source, sourcePos < targetPos ? target.nextSibling : target);
+    for (const el of tiles) {
+      if (el === source) continue;
+      const a = before.get(el);
+      const b = pos(el);
+      const dx = a.x - b.x, dy = a.y - b.y;
+      if (!dx && !dy) continue;
+      el.getAnimations().forEach(anim => anim.cancel());
+      el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }],
+        { duration: 160, easing: 'ease-out' });
     }
   }
 
-  async function setBrightness(val) {
-    try {
-      await api('command', 'POST', { method: 'set_bright', params: [Number(val), 'smooth', 300] });
-      state.props.bright = String(val);
-      document.getElementById('brightnessFill').style.width = val + '%';
-      document.getElementById('brightnessVal').textContent = val + '%';
-      updateUI();
-    } catch (e) {
-      await poll();
-    }
+  function finishFavDrag() {
+    if (!favDrag) return;
+    const drag = favDrag;
+    favDrag = null;
+    if (!drag.active) return;
+    drag.ghost.remove();
+    drag.tile.classList.remove('drag-source');
+    const list = favoritesList();
+    const order = Array.from(document.querySelectorAll('#favRow .fav:not(.fav-add)')).map(el => Number(el.dataset.index));
+    if (order.every((idx, pos) => idx === pos)) return;
+    persistFavorites(order.map(idx => list[idx]));
   }
 
-  async function setHue(val) {
-    try {
-      await api('command', 'POST', { method: 'set_hsv', params: [Number(val), 100, 'smooth', 300] });
-      state.props.hue = String(val);
-      state.props.color_mode = '1';
-      updateUI();
-    } catch (e) {
-      await poll();
-    }
+  // Keyboard alternative: ← / → move the focused favorite while editing.
+  function onFavKeyDown(e, index) {
+    if (!favEditing || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+    e.preventDefault();
+    const list = favoritesList().slice();
+    const to = index + (e.key === 'ArrowLeft' ? -1 : 1);
+    if (to < 0 || to >= list.length) return;
+    [list[index], list[to]] = [list[to], list[index]];
+    e.currentTarget.dataset.favIndex = String(to); // keep focus on the moved item
+    persistFavorites(list);
   }
 
-  // ── Temp ──
-  async function setTemp(k) {
-    try {
-      await api('command', 'POST', { method: 'set_ct_abx', params: [k, 'smooth', 300] });
-      state.props.ct = String(k);
-      state.props.color_mode = '2';
-    } catch (e) {
-      await poll();
-      return;
+  // ── Popover height follows the content (macOS app) ──
+  function reportHeight() {
+    const handler = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.contentHeight;
+    if (!handler) return;
+    let height = Math.ceil(document.body.getBoundingClientRect().height);
+    const overlay = document.getElementById('settingsOverlay');
+    if (overlay && overlay.classList.contains('visible')) {
+      const panel = overlay.querySelector('.settings-panel');
+      const last = panel.lastElementChild.getBoundingClientRect();
+      height = Math.max(height, Math.ceil(last.bottom - panel.getBoundingClientRect().top + panel.scrollTop + 12));
     }
-    if (tempSlider && document.activeElement !== tempSlider) {
-      tempSlider.value = k;
-      const pct = Math.round(((k - 1700) / (6500 - 1700)) * 100);
-      tempFill.style.width = pct + '%';
-      tempValText.textContent = k + 'K';
-      const tIndex = Math.min(Math.max(Math.round((k - 1700) / 600), 0), temps.length - 1);
-      tempFill.style.backgroundColor = temps[tIndex].color;
+    if (height !== reportHeight.last) {
+      reportHeight.last = height;
+      handler.postMessage(height);
     }
-    updateUI();
+  }
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => reportHeight());
+    ro.observe(document.body);
+    document.querySelectorAll('.settings-group').forEach(el => ro.observe(el));
   }
 
   function updateBrightnessColors(val) {
     const isPowerOn = state.props && state.props.power === 'on';
     const numVal = Number(val);
-
-    // Left Sun Icon: White when <= 4% or power is off; Black when > 4% and power is on
-    const sliderIcon = document.getElementById('sliderIcon');
-    if (sliderIcon) {
-      if (isPowerOn && numVal > 4) {
-        sliderIcon.style.color = '#0a0a0f';
-      } else {
-        sliderIcon.style.color = 'rgba(255, 255, 255, 0.9)';
-      }
-    }
-
-    // Right Percentage Text: Black when > 88% and power is on; White otherwise
-    const brValText = document.getElementById('brightnessVal');
-    if (brValText) {
-      if (isPowerOn && numVal > 88) {
-        brValText.style.color = '#0a0a0f';
-      } else {
-        brValText.style.color = '#ffffff';
-      }
-    }
+    const ink = getComputedStyle(document.documentElement).getPropertyValue('--bulb-ink').trim() || '#0a0a0f';
+    document.getElementById('sliderIcon').style.color = (isPowerOn && numVal > 6) ? ink : 'rgba(255, 255, 255, 0.9)';
+    document.getElementById('brightnessVal').style.color = (isPowerOn && numVal > 86) ? ink : '#ffffff';
   }
 
   // ── Event listeners ──
@@ -1224,118 +1740,90 @@
     brFill.style.width = val + '%';
     brValText.textContent = val + '%';
     updateBrightnessColors(val);
-    
-    // Highlight active preset (if any matches exactly)
-    document.querySelectorAll('#brightnessPresets .preset-btn').forEach(el => {
-      const pVal = parseInt(el.textContent);
-      el.className = 'preset-btn' + (pVal === Number(val) ? ' selected' : '');
-    });
-
     clearTimeout(brightnessTimeout);
     brightnessTimeout = setTimeout(() => setBrightness(val), 80);
   });
 
-  let hueTimeout;
-  document.getElementById('hueSlider').addEventListener('input', (e) => {
-    clearTimeout(hueTimeout);
-    hueTimeout = setTimeout(() => setHue(e.target.value), 80);
-  });
+  // Hue and saturation share one set_hsv command; debounce them together.
+  let colorTimeout;
+  const hueSliderEl = document.getElementById('hueSlider');
+  const satSliderEl = document.getElementById('satSlider');
+  function onColorInput() {
+    document.documentElement.style.setProperty('--sat-hue', hueSliderEl.value);
+    clearTimeout(colorTimeout);
+    colorTimeout = setTimeout(() => setColor(hueSliderEl.value, satSliderEl.value), 120);
+  }
+  hueSliderEl.addEventListener('input', onColorInput);
+  satSliderEl.addEventListener('input', onColorInput);
 
   let tempTimeout;
   const tempSlider = document.getElementById('tempSlider');
-  const tempFill = document.getElementById('tempFill');
   const tempValText = document.getElementById('tempVal');
-  const tempIcon = document.getElementById('tempIcon');
-
   tempSlider.addEventListener('input', (e) => {
-    const k = Number(e.target.value);
-    const pct = Math.round(((k - 1700) / (6500 - 1700)) * 100);
-    tempFill.style.width = pct + '%';
-    tempValText.textContent = k + 'K';
-
-    const tIndex = Math.min(Math.max(Math.round((k - 1700) / 600), 0), temps.length - 1);
-    const col = temps[tIndex].color;
-    tempFill.style.backgroundColor = col;
-
-    if (state.props && state.props.power === 'on' && pct > 88 && (col === '#ffffff' || col === '#fff0bd')) {
-      tempValText.style.color = '#0a0a0f';
-    } else {
-      tempValText.style.color = '#ffffff';
-    }
-
-    if (tempIcon) {
-      tempIcon.style.color = (state.props && state.props.power === 'on' && pct > 9) ? '#0a0a0f' : 'rgba(255, 255, 255, 0.9)';
-    }
-
-    document.querySelectorAll('.temp-circle').forEach(el => {
-      const circleK = Number(el.dataset.k);
-      el.className = 'temp-circle' + (Math.abs(circleK - k) < 300 ? ' selected' : '');
-    });
-
+    tempValText.textContent = e.target.value + 'K';
     clearTimeout(tempTimeout);
-    tempTimeout = setTimeout(() => setTemp(k), 80);
+    tempTimeout = setTimeout(() => setTemp(e.target.value), 80);
   });
+
+  // Dark or light text on top of the bulb color, whichever reads better.
+  function inkFor(color) {
+    const probe = document.createElement('div');
+    probe.style.color = color;
+    document.body.appendChild(probe);
+    const rgb = getComputedStyle(probe).color.match(/\d+(\.\d+)?/g).map(Number);
+    probe.remove();
+    const lum = (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255;
+    return lum > 0.55 ? '#1a1206' : '#ffffff';
+  }
 
   // ── UI Update ──
   function updateUI() {
     const { connected, props } = state;
     const t = i18n[currentLang] || i18n.en;
+    const isOn = connected && props.power === 'on';
 
     // Status
     const dot = document.getElementById('statusDot');
     const txt = document.getElementById('statusText');
     dot.className = 'status-dot' + (connected ? ' on' : '');
-    
     if (connected) {
-      txt.textContent = t.statusConnected;
+      txt.textContent = t.statusConnected + ' · ' + (isOn ? t.powerOn : t.powerOff);
     } else {
-      txt.textContent = state.hasConfig ? t.statusDisconnected : t.statusWaiting;
+      txt.textContent = state.reconnecting ? t.statusReconnecting
+        : (state.hasConfig ? t.statusDisconnected : t.statusWaiting);
     }
 
-    // Controls visibility
-    const controls = document.getElementById('controls');
-    controls.className = connected ? 'controls-enabled' : 'controls-disabled';
+    document.getElementById('controls').className = 'controls-wrapper ' + (connected ? 'controls-enabled' : 'controls-disabled');
+    // Favorites stay usable while the bulb is off: a scene turns it on.
+    document.getElementById('lightControls').classList.toggle('power-off-disabled', connected && !isOn);
+    document.getElementById('powerBtn').disabled = !connected;
 
-    // Toggle power-off-disabled on color and temperature sections when bulb is off
-    const colorSec = document.getElementById('colorSection');
-    const tempSec = document.getElementById('tempSection');
-    if (colorSec) colorSec.classList.toggle('power-off-disabled', !connected || props.power !== 'on');
-    if (tempSec) tempSec.classList.toggle('power-off-disabled', !connected || props.power !== 'on');
+    // Mode tabs
+    const mode = currentMode();
+    document.getElementById('segWhite').classList.toggle('active', mode === 'white');
+    document.getElementById('segColor').classList.toggle('active', mode === 'color');
+    document.getElementById('segWhite').setAttribute('aria-selected', mode === 'white');
+    document.getElementById('segColor').setAttribute('aria-selected', mode === 'color');
+    document.getElementById('whitePanel').hidden = mode !== 'white';
+    document.getElementById('colorPanel').hidden = mode !== 'color';
 
+    renderFavorites();
     if (!connected) return;
 
-    // Determine current color & glow based on mode
-    let color = '#fffdf0';
-    let glow = 'rgba(255, 255, 255, 0.3)';
+    // Bulb color drives the power button and brightness fill
+    let color = '#fff6e6';
+    if (props.color_mode === '3') color = hsvColor(props.hue, props.sat);
+    else if (props.color_mode === '1') color = '#' + (Number(props.rgb) || 0xffffff).toString(16).padStart(6, '0');
+    else if (props.color_mode === '2') color = ctColor(props.ct);
+    const ink = inkFor(color);
+    const root = document.documentElement.style;
+    root.setProperty('--bulb-color', isOn ? color : 'rgba(255, 255, 255, 0.05)');
+    root.setProperty('--bulb-ink', ink);
+    root.setProperty('--primary-glow', isOn ? (color.startsWith('#') ? hexToRgba(color, 0.55) : color.replace('hsl', 'hsla').replace(')', ', 0.55)')) : 'transparent');
+    root.setProperty('--brightness-glow', isOn ? color : 'rgba(255, 255, 255, 0.15)');
+    document.getElementById('powerBtn').className = 'power-btn' + (isOn ? ' on' : '');
 
-    if (props.power === 'on') {
-      if (props.color_mode === '1') {
-        const hue = Number(props.hue) || 0;
-        color = 'hsl(' + hue + ', 100%, 65%)';
-        glow = 'hsla(' + hue + ', 100%, 65%, 0.4)';
-      } else if (props.color_mode === '2') {
-        const ct = Number(props.ct) || 4000;
-        const tIndex = Math.min(Math.max(Math.round((ct - 1700) / 600), 0), temps.length - 1);
-        color = temps[tIndex].color;
-        glow = hexToRgba(color, 0.4);
-      }
-    } else {
-      color = 'rgba(255, 255, 255, 0.05)';
-      glow = 'rgba(0, 0, 0, 0)';
-    }
-
-    // Set Dynamic Colors
-    document.documentElement.style.setProperty('--bulb-color', color);
-    document.documentElement.style.setProperty('--primary-glow', glow);
-    
-    const fillCol = props.power === 'on' ? color : 'rgba(255, 255, 255, 0.15)';
-    document.documentElement.style.setProperty('--brightness-glow', fillCol);
-
-    // Power button active state
-    const powerBtn = document.getElementById('powerBtn');
-    powerBtn.className = 'power-btn' + (props.power === 'on' ? ' on' : '');
-
-    // Brightness value sync
+    // Sliders follow the bulb unless the user is dragging them
     const brVal = props.bright || 50;
     if (document.activeElement !== brSlider) {
       brSlider.value = brVal;
@@ -1344,51 +1832,24 @@
     }
     updateBrightnessColors(brVal);
 
-    // Highlight active brightness preset
-    document.querySelectorAll('#brightnessPresets .preset-btn').forEach(el => {
-      const val = parseInt(el.textContent);
-      el.className = 'preset-btn' + (val === Number(brVal) ? ' selected' : '');
-    });
-
-    // Hue value sync
-    const hueSlider = document.getElementById('hueSlider');
-    if (document.activeElement !== hueSlider) {
-      hueSlider.value = props.hue || 0;
+    if (document.activeElement !== hueSliderEl) {
+      hueSliderEl.value = props.hue || 0;
+      root.setProperty('--sat-hue', hueSliderEl.value);
     }
-
-    // Temperature slider sync
-    const ct = Number(props.ct) || 4000;
-    if (tempSlider && document.activeElement !== tempSlider) {
-      tempSlider.value = ct;
-      const pct = Math.round(((ct - 1700) / (6500 - 1700)) * 100);
-      tempFill.style.width = pct + '%';
-      tempValText.textContent = ct + 'K';
-      const tIndex = Math.min(Math.max(Math.round((ct - 1700) / 600), 0), temps.length - 1);
-      const col = temps[tIndex].color;
-      tempFill.style.backgroundColor = col;
-
-      if (props.power === 'on' && pct > 88 && (col === '#ffffff' || col === '#fff0bd')) {
-        tempValText.style.color = '#0a0a0f';
-      } else {
-        tempValText.style.color = '#ffffff';
-      }
-
-      if (tempIcon) {
-        tempIcon.style.color = (props.power === 'on' && pct > 9) ? '#0a0a0f' : 'rgba(255, 255, 255, 0.9)';
-      }
+    if (document.activeElement !== satSliderEl) {
+      satSliderEl.value = props.sat === undefined ? 100 : props.sat;
     }
-
-    // Temperature circles
-    document.querySelectorAll('.temp-circle').forEach(el => {
-      const k = Number(el.dataset.k);
-      el.className = 'temp-circle' + (Math.abs(k - ct) < 300 ? ' selected' : '');
-    });
+    if (document.activeElement !== tempSlider) {
+      tempSlider.value = Number(props.ct) || 4000;
+      tempValText.textContent = tempSlider.value + 'K';
+    }
   }
 
   // ── Status polling ──
   async function poll() {
     try {
       const data = await api('status');
+      if (!('favorites' in data)) data.favorites = state.favorites ?? null;
       state = data;
       
       // Auto-set language from server config
@@ -1415,26 +1876,63 @@
       }
 
       updateUI();
+      updateDeviceInfo();
     } catch (e) {
       state.connected = false;
       updateUI();
     }
   }
 
-  setInterval(poll, 1500);
-  poll();
+  // Poll only while the panel is visible. The macOS app calls
+  // setPanelActive() when the popover opens/closes; browsers use visibility.
+  let panelActive = !document.hidden;
+  let pollTimer = null;
+  function setPanelActive(active) {
+    panelActive = !!active;
+    clearInterval(pollTimer);
+    pollTimer = null;
+    if (panelActive) {
+      poll();
+      pollTimer = setInterval(poll, 1500);
+    }
+  }
+  window.setPanelActive = setPanelActive;
+  window.refreshState = poll;
+  document.addEventListener('visibilitychange', () => setPanelActive(!document.hidden));
+  setPanelActive(panelActive);
   if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.loginItemStatusRequested) {
     window.webkit.messageHandlers.loginItemStatusRequested.postMessage(true);
   } else {
-    setAutostartStatus(false, false);
+    setAutostartStatus({ state: 'unavailable' });
   }
 
   // ── Settings dialog management ──
   function showSettings() {
+    updateDeviceInfo();
     document.getElementById('settingsOverlay').classList.add('visible');
+    reportHeight();
   }
+
+  function updateDeviceInfo() {
+    const t = i18n[currentLang] || i18n.en;
+    const info = document.getElementById('deviceInfo');
+    if (!info) return;
+    info.textContent = state.device && state.device.host
+      ? state.device.host + ' · ' + (state.connected ? t.statusConnected
+          : (state.reconnecting ? t.statusReconnecting : t.statusDisconnected))
+      : t.noDevice;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    const overlay = document.getElementById('settingsOverlay');
+    if (e.key === 'Escape' && overlay.classList.contains('visible')
+        && document.activeElement !== document.getElementById('shortcutRecorder')) {
+      hideSettings();
+    }
+  });
   function hideSettings() {
     document.getElementById('settingsOverlay').classList.remove('visible');
+    reportHeight();
   }
 
   async function startScan() {
@@ -1443,11 +1941,11 @@
     const t = i18n[currentLang] || i18n.en;
     
     btn.disabled = true;
-    btn.textContent = t.scanning;
+    btn.textContent = '…';
     results.innerHTML = '<div class="scanning-text"><div class="spinner"></div>' + t.scanWait + '</div>';
 
     try {
-      const data = await api('scan');
+      const data = await api('scan', 'POST', {});
       if (data.devices.length === 0) {
         results.innerHTML = '<div class="scanning-text">' + t.noDevices + '</div>';
       } else {
@@ -1462,17 +1960,17 @@
             if (e.key === 'Enter' || e.key === ' ') selectDevice(d.host, d.port);
           });
 
+          const isCurrent = state.connected && state.device && state.device.host === d.host;
+          if (isCurrent) item.classList.add('current');
           const dot = document.createElement('div');
           dot.className = 'device-dot';
-          const details = document.createElement('div');
-          const ip = document.createElement('div');
+          const ip = document.createElement('span');
           ip.className = 'ip';
           ip.textContent = d.host;
-          const port = document.createElement('div');
+          const port = document.createElement('span');
           port.className = 'port';
-          port.textContent = 'Port: ' + d.port;
-          details.append(ip, port);
-          item.append(dot, details);
+          port.textContent = isCurrent ? t.statusConnected : (d.port === 55443 ? '' : ':' + d.port);
+          item.append(dot, ip, port);
           results.appendChild(item);
         });
       }
@@ -1481,8 +1979,7 @@
     }
 
     btn.disabled = false;
-    btn.textContent = t.rescan;
-    btn.dataset.scanned = "true";
+    btn.textContent = t.scanShort;
   }
 
   async function selectDevice(host, port) {
@@ -1492,10 +1989,14 @@
 
     try {
       await api('connect', 'POST', { host, port });
+      results.replaceChildren();
       hideSettings();
       poll();
     } catch (e) {
-      results.innerHTML = '<div class="scanning-text">' + t.connectError + e.message + '</div>';
+      const msg = document.createElement('div');
+      msg.className = 'scanning-text';
+      msg.textContent = t.connectError + e.message;
+      results.replaceChildren(msg);
     }
   }
 </script>
