@@ -25,6 +25,12 @@ jobs:
           awk '/<script>/{f=1;next}/<\/script>/{f=0}f' dashboard.html | node --check -
           bash -n build.sh
 
+      - name: Test Standalone Controller
+        run: npm test
+
+      - name: Test Native Controller
+        run: ./macos/Tests/run.sh
+
       - name: Build Application
         run: ./build.sh
 
@@ -33,3 +39,11 @@ jobs:
           test -x "Yeelight QuickControl.app/Contents/MacOS/YeelightQuickControl"
           plutil -lint "Yeelight QuickControl.app/Contents/Info.plist"
           codesign --verify --deep --strict "Yeelight QuickControl.app"
+          lipo -archs "Yeelight QuickControl.app/Contents/MacOS/YeelightQuickControl" | grep -q x86_64
+          lipo -archs "Yeelight QuickControl.app/Contents/MacOS/YeelightQuickControl" | grep -q arm64
+          test -x "Yeelight QuickControl.app/Contents/Helpers/Toggle Light.app/Contents/MacOS/ActionHelper"
+          test "$(plutil -extract YQCCommandURL raw "Yeelight QuickControl.app/Contents/Helpers/Toggle Light.app/Contents/Info.plist")" = "yeelight-quickcontrol://toggle"
+          plutil -extract CFBundleURLTypes.0.CFBundleURLSchemes.0 raw "Yeelight QuickControl.app/Contents/Info.plist" | grep -qx yeelight-quickcontrol
+
+      - name: Self-Test Dashboard Bridge
+        run: YEELIGHT_QUICKCONTROL_SELFTEST=1 "Yeelight QuickControl.app/Contents/MacOS/YeelightQuickControl"
